@@ -55,9 +55,8 @@ form.addEventListener("submit", async (event) => {
     payload[key] = value;
   }
 
-  const apiBaseUrlInput = form.elements.apiBaseUrl.value.trim();
-  const base = apiBaseUrlInput || window.location.origin;
-  const endpoint = `${base.replace(/\/$/, "")}/diabetes_predict`;
+  // UPDATED: Now it just hits the same server directly!
+  const endpoint = "/diabetes_predict";
 
   setResult("Predicting...", "success");
 
