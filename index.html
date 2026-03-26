@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Diabetes Risk Predictor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="hero">
+        <p class="eyebrow">ML MODEL API APP</p>
+        <h1>Diabetes Risk Predictor</h1>
+        <p>
+          Enter the health values below and get an instant prediction from your
+          FastAPI model.
+        </p>
+      </section>
+
+      <section class="panel">
+        <form id="predict-form" class="form-grid" novalidate>
+          <div class="field wide">
+            <label for="apiBaseUrl">API Base URL (optional)</label>
+            <input
+              id="apiBaseUrl"
+              name="apiBaseUrl"
+              type="url"
+              placeholder="https://your-render-service.onrender.com"
+            />
+            <small>Leave empty to use the same domain as this app.</small>
+          </div>
+
+          <div class="field">
+            <label for="pregnancies">Pregnancies</label>
+            <input id="pregnancies" name="pregnancies" type="number" min="0" required />
+          </div>
+          <div class="field">
+            <label for="Glucose">Glucose</label>
+            <input id="Glucose" name="Glucose" type="number" min="0" required />
+          </div>
+          <div class="field">
+            <label for="BloodPressure">Blood Pressure</label>
+            <input id="BloodPressure" name="BloodPressure" type="number" min="0" required />
+          </div>
+          <div class="field">
+            <label for="SkinThickness">Skin Thickness</label>
+            <input id="SkinThickness" name="SkinThickness" type="number" min="0" required />
+          </div>
+          <div class="field">
+            <label for="Insulin">Insulin</label>
+            <input id="Insulin" name="Insulin" type="number" min="0" required />
+          </div>
+          <div class="field">
+            <label for="BMI">BMI</label>
+            <input id="BMI" name="BMI" type="number" min="0" step="0.1" required />
+          </div>
+          <div class="field">
+            <label for="DiabetesPedigreeFunction">Diabetes Pedigree Function</label>
+            <input
+              id="DiabetesPedigreeFunction"
+              name="DiabetesPedigreeFunction"
+              type="number"
+              min="0"
+              step="0.001"
+              required
+            />
+          </div>
+          <div class="field">
+            <label for="Age">Age</label>
+            <input id="Age" name="Age" type="number" min="1" required />
+          </div>
+
+          <div class="actions wide">
+            <button id="sampleBtn" type="button" class="btn ghost">Use Sample</button>
+            <button type="submit" class="btn primary">Predict</button>
+          </div>
+        </form>
+
+        <div id="resultCard" class="result" aria-live="polite">
+          <p class="result-label">Prediction Result</p>
+          <p id="resultText">Fill the form and click Predict.</p>
+        </div>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
