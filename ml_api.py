@@ -1,35 +1,75 @@
-from fastapi import FastAPI
-from pydantic import BaseModel    
 import pickle
-import json
-app = FastAPI()
-class InputData(BaseModel):
-    pregnancies	: int
-    Glucose	: int
-    BloodPressure	: int
-    SkinThickness	: int
-    Insulin	: int
-    BMI	: float
-    DiabetesPedigreeFunction	: float
-    Age	: int
+from pathlib import Path
 
-# Load the trained model
-trained_diabetes_model = pickle.load(open('trained_diabet_model.sav', 'rb'))
-trained_standard_scaler = pickle.load(open('trained_diabet_scalar.sav', 'rb'))
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
+
+# --- PATH CONFIGURATION ---
+BASE_DIR = Path(__file__).resolve().parent
+MODEL_PATH = BASE_DIR / "trained_diabet_model.sav"
+SCALER_PATH = BASE_DIR / "trained_diabet_scalar.sav"
+PUBLIC_DIR = BASE_DIR / "public"
+
+app = FastAPI(title="Diabetes Predictor API")
+
+# --- MIDDLEWARE ---
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# --- DATA SCHEMA ---
+class InputData(BaseModel):
+    pregnancies: int
+    Glucose: int
+    BloodPressure: int
+    SkinThickness: int
+    Insulin: int
+    BMI: float
+    DiabetesPedigreeFunction: float
+    Age: int
+
+# --- LOAD ML MODELS ---
+trained_diabetes_model = pickle.load(open(MODEL_PATH, "rb"))
+trained_standard_scaler = pickle.load(open(SCALER_PATH, "rb"))
+
+# --- SERVE FRONTEND (STANDALONE APP SETUP) ---
+# Mount the public directory so the browser can load style.css and app.js
+app.mount("/public", StaticFiles(directory=PUBLIC_DIR), name="public")
+
+# Serve the main HTML file when someone visits the base URL
+@app.get("/")
+async def serve_home():
+    return FileResponse(PUBLIC_DIR / "index.html")
+
+# --- API ENDPOINTS ---
+@app.get("/health")
+async def health():
+    return {"status": "ok", "message": "API is running natively!"}
 
 @app.post("/diabetes_predict")
-async def diabeted_pred(data: InputData):
-    # Convert input data to a list for prediction
-    input_data = data.model_dump_json()
-    input_data_dict = json.loads(input_data)
-    input_data_list = [input_data_dict['pregnancies'], input_data_dict['Glucose'], input_data_dict['BloodPressure'], input_data_dict['SkinThickness'], input_data_dict['Insulin'], input_data_dict['BMI'], input_data_dict['DiabetesPedigreeFunction'], input_data_dict['Age']]
-    # Scale the input data using the trained standard scaler     
-    scaled_input_data = trained_standard_scaler.transform([input_data_list])
-    # Make a prediction using the trained model
+async def diabetes_predict(data: InputData):
+    payload = data.model_dump()
+    features = [
+        payload["pregnancies"],
+        payload["Glucose"],
+        payload["BloodPressure"],
+        payload["SkinThickness"],
+        payload["Insulin"],
+        payload["BMI"],
+        payload["DiabetesPedigreeFunction"],
+        payload["Age"],
+    ]
+
+    # Scale data and predict
+    scaled_input_data = trained_standard_scaler.transform([features])
     prediction = trained_diabetes_model.predict(scaled_input_data)
-    # Return the prediction result
+
     if prediction[0] == 1:
         return {"prediction": "The person is likely to have diabetes."}
-    else:
-        return {"prediction": "The person is unlikely to have diabetes."}
- 
+    return {"prediction": "The person is unlikely to have diabetes."}
