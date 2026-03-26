@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="/public/style.css" />
   </head>
   <body>
     <main class="app-shell">
@@ -25,17 +25,6 @@
 
       <section class="panel">
         <form id="predict-form" class="form-grid" novalidate>
-          <div class="field wide">
-            <label for="apiBaseUrl">API Base URL (optional)</label>
-            <input
-              id="apiBaseUrl"
-              name="apiBaseUrl"
-              type="url"
-              placeholder="https://your-render-service.onrender.com"
-            />
-            <small>Leave empty to use the same domain as this app.</small>
-          </div>
-
           <div class="field">
             <label for="pregnancies">Pregnancies</label>
             <input id="pregnancies" name="pregnancies" type="number" min="0" required />
@@ -89,6 +78,6 @@
       </section>
     </main>
 
-    <script src="app.js"></script>
+    <script src="/public/app.js"></script>
   </body>
 </html>
